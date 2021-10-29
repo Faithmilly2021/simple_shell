@@ -7,6 +7,8 @@ This project is about simple shell, A shell is a program which provides a user i
 3. Explanation
 
 **Author**
+
+
 Faith Milidzani Ncube
 
 
