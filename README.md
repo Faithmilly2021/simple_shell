@@ -8,12 +8,13 @@ This project is about simple shell, A shell is a program which provides a user i
 
 **Author**
 Faith Milidzani Ncube
+Damilola Rebecca
 
 **How to use**
 
 **Requirements**
-All files are compiled in ubuntu 20.04
-C programs and functions are compiled  with gcc
+All files are compiled in ubuntu 20.04 LTS
+C programs and functions are compiled  with gcc using the options -Wall -Werror -Wextra -pedantic -std=gnu89
 Code must use the Betty style, betty-style.pl
 
 **How to compile**
