@@ -1,67 +1,161 @@
 #include "shell.h"
 
 /**
- * de_lim - checks for char to match any *
- * @c: char
- * @str: str
- * Return: Always 1, else return 0
+ * bui_ex - exit builtin
+ * @cmd: Command
+ * @input: input
+ * @argv: code
+ * @c: count execution
  */
 
-unsigned int de_lim(char c, const char *str)
+void bui_ex(char **cmd, char *input, char **argv, int c)
 {
-	unsigned int a;
+	int sta_tus, f = 0;
 
-	for (a = 0; str[a] != '\0'; a++)
+	if (cmd[1] == NULL)
 	{
-		if (c == str[a])
-			return (1);
+		free(input);
+		free(cmd);
+		exit(EXIT_SUCCESS);
+	}
+	while (cmd[1][f])
+	{
+		if (_isalpha(cmd[1][f++]) != 0)
+		{
+			err_pr(argv, c, cmd);
+			break;
+		}
+		else
+		{
+			sta_tus = _atoi(cmd[1]);
+			free(input);
+			free(cmd);
+			exit(sta_tus);
+		}
+	}
+}
+
+
+/**
+ * ch_dir - to switch between directories
+ * @cmd: command
+ * @er: last executed command
+ * Return: Always 0 (success) else, 1
+ */
+
+int ch_dir(char **cmd, __attribute__((unused))int er)
+{
+	int _val = -1;
+	char cwd[PATH_MAX];
+
+	if (cmd[1] == NULL)
+		_val = chdir(getenv("HOME"));
+	else if (_strcmp(cmd[1], "-") == 0)
+	{
+		_val = chdir(getenv("OLDPWD"));
+	}
+	else
+		_val = chdir(cmd[1]);
+
+	if (_val == -1)
+	{
+		perror("hsh");
+		return (-1);
+	}
+	else if (_val != -1)
+	{
+		getcwd(cwd, sizeof(cwd));
+		setenv("OLDPWD", getenv("PWD"), 1);
+		setenv("PWD", cwd, 1);
 	}
 	return (0);
 }
 
 /**
- * str_tok - takes string token
- * @str: String
- * @delim: de_limiter
- * Return: pointer to next token Or NULL
+ * dis_env - function to display env. variable
+ * @cmd: Command
+ * @er: last executed command status
+ * Return: Always 0
  */
 
-char *str_tok(char *str, const char *delim)
+int dis_env(__attribute__((unused)) char **cmd, __attribute__((unused)) int er)
 {
-	static char *tok;
-	static char *nxt;
-	unsigned int i;
+size_t i;
+	int len;
 
-	if (str != NULL)
-		nxt = str;
-	tok = nxt;
-	if (tok == NULL)
-		return (NULL);
-	for (i = 0; tok[i] != '\0'; i++)
+	for (i = 0; environ[i] != NULL; i++)
 	{
-		if (de_lim(tok[i], delim) == 0)
-			break;
+		len = _strlen(environ[i]);
+		write(1, environ[i], len);
+		write(STDOUT_FILENO, "\n", 1);
 	}
-	if (nxt[i] == '\0' || nxt[i] == '#')
+	return (0);
+}
+
+/**
+ * help_dis - help display
+ * @cmd: Command
+ * @er: last executed command status
+ * Return: Always 0, else -1
+ */
+
+int help_dis(char **cmd, __attribute__((unused))int er)
+{
+	int dh, hd, r = 1;
+	char c;
+
+	dh = open(cmd[1], O_RDONLY);
+	if (dh < 0)
 	{
-		nxt = NULL;
-		return (NULL);
+		perror("Error");
+		return (0);
 	}
-	tok = nxt + i;
-	nxt = tok;
-	for (i = 0; nxt[i] != '\0'; i++)
+	while (r > 0)
 	{
-		if (de_lim(nxt[i], delim) == 1)
-			break;
+		r = read(dh, &c, 1);
+		hd = write(STDOUT_FILENO, &c, r);
+		if (hd < 0)
+		{
+			return (-1);
+		}
 	}
-	if (nxt[i] == '\0')
-		nxt = NULL;
+	_putchar('\n');
+	return (0);
+}
+
+/**
+ * echo_bul - function that handles echo
+ * @st: last status
+ * @cmd: Command
+ * Return: Always 0, else echo
+ */
+
+int echo_bul(char **cmd, int st)
+{
+	char *_pth;
+	unsigned int  pid = getppid();
+
+	if (_strncmp(cmd[1], "$?", 2) == 0)
+	{
+		pr_num_in(st);
+		DISPLAY("\n");
+	}
+	else if (_strncmp(cmd[1], "$$", 2) == 0)
+	{
+		pr_num(pid);
+		DISPLAY("\n");
+
+	}
+	else if (_strncmp(cmd[1], "$PATH", 5) == 0)
+	{
+		_pth = get_env_name("PATH");
+		DISPLAY(_pth);
+		DISPLAY("\n");
+		free(_pth);
+
+	}
 	else
-	{
-		nxt[i] = '\0';
-		nxt = nxt + i + 1;
-		if (*nxt == '\0')
-			nxt = NULL;
-	}
-	return (tok);
+		return (pr_echo(cmd));
+
+	return (1);
 }
