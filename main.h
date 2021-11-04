@@ -22,5 +22,11 @@ void print_number(int n);
 int _putchar(char c);
 void print_terror(char **argv, char *process, int cuenta, char *text);
 void superFree(char *text, char **argv);
+int lsh_num_builtins(char *text);
+int lsh_cd(char **args);
+int lsh_help(char **args);
+int lsh_exit(char **args);
+int lsh_launch(char **args);
+int lsh_execute(char **args);
 
 #endif /* _MAIN_H_ */
