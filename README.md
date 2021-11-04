@@ -28,3 +28,19 @@ Write the script in the file using an editor.
 Make the script executable with command chmod +x <fileName>.
 Run the script using ./<fileName>.
 ![download](https://user-images.githubusercontent.com/88321504/139048180-a39aa369-97e3-4c63-92b2-ae476f37d545.png)
+
+
+**Builtin Commands**
+cd - change directory
+
+env - list the current environment variables
+
+exit - exit the shell
+
+help - display help for a builtin command
+
+history - display the command history for the current shell session
+
+setenv - sets an environment variable
+
+unsetenv - unsets an environment variable
