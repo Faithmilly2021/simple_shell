@@ -9,6 +9,17 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+#include "./stringfiles/strings.h
+#include "./builtinfiles/builtins.h"
+#include "./errorfiles/errors.h"
+
+#define SPACE " "
+#define EQUAL "="
+#define COLON ":"
+#define BSLASH "\\"
+#define FSLASH "/"
+#define BUF_SIZE 4096
+
 int free_EOF(char *text);
 int free_textNULL(char *text);
 void freeNewpid(void);
@@ -22,5 +33,6 @@ void print_number(int n);
 int _putchar(char c);
 void print_terror(char **argv, char *process, int cuenta, char *text);
 void superFree(char *text, char **argv);
+
 
 #endif /* _MAIN_H_ */
