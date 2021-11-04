@@ -1,93 +1,67 @@
 #include "shell.h"
 
 /**
- * main - simple shell code
- * @argc: Argument Count
- * @argv: Argument Value
- * Return: Exit value of sta_tus
+ * de_lim - checks for char to match any *
+ * @c: char
+ * @str: str
+ * Return: Always 1, else return 0
  */
 
-int main(__attribute__((unused)) int argc, char **argv)
+unsigned int de_lim(char c, const char *str)
 {
-	char *_inp, **cmd;
-	int _count = 0, sta_tus = 1, _xt = 0;
+	unsigned int a;
 
-	if (argv[1] != NULL)
-		cmd_reader(argv[1], argv);
-	signal(SIGINT, sgn_hnd);
-	while (sta_tus)
+	for (a = 0; str[a] != '\0'; a++)
 	{
-		_count++;
-		if (isatty(STDIN_FILENO))
-			prompt();
-		_inp = read_input();
-		if (_inp[0] == '\0')
-		{
-			continue;
-		}
-		history(_inp);
-		cmd = cmd_sort(_inp);
-		if (_strcmp(cmd[0], "exit") == 0)
-		{
-			bui_ex(cmd, _inp, argv, _count);
-		}
-		else if (bui_chk(cmd) == 0)
-		{
-			_xt = bui_hnd(cmd, _xt);
-			free_all(cmd, _inp);
-			continue;
-		}
-		else
-		{
-			_xt = cmd_exe(cmd, _inp, _count, argv);
-
-		}
-		free_all(cmd, _inp);
+		if (c == str[a])
+			return (1);
 	}
-	return (sta_tus);
+	return (0);
 }
 
 /**
- * bui_chk - function for builtin check
- * @cmd: Command
- * Return: -1
+ * str_tok - takes string token
+ * @str: String
+ * @delim: de_limiter
+ * Return: pointer to next token Or NULL
  */
 
-int bui_chk(char **cmd)
+char *str_tok(char *str, const char *delim)
 {
-	bui_lt fun[] = {
-		{"cd", NULL},
-		{"help", NULL},
-		{"echo", NULL},
-		{"history", NULL},
-		{NULL, NULL}
-	};
-	int a = 0;
-		if (*cmd == NULL)
+	static char *tok;
+	static char *nxt;
+	unsigned int i;
+
+	if (str != NULL)
+		nxt = str;
+	tok = nxt;
+	if (tok == NULL)
+		return (NULL);
+	for (i = 0; tok[i] != '\0'; i++)
 	{
-		return (-1);
+		if (de_lim(tok[i], delim) == 0)
+			break;
 	}
-
-	while ((fun + a)->command)
+	if (nxt[i] == '\0' || nxt[i] == '#')
 	{
-		if (_strcmp(cmd[0], (fun + a)->command) == 0)
-			return (0);
-		a++;
+		nxt = NULL;
+		return (NULL);
 	}
-	return (-1);
-}
-
-/**
- * env_var_arr - function that creates env. array. variable
- * @_env: evironment variable array
- * Return: Void
- */
-
-void env_var_arr(char **_env)
-{
-	int i;
-
-	for (i = 0; environ[i]; i++)
-		_env[i] = _strdup(environ[i]);
-	_env[i] = NULL;
+	tok = nxt + i;
+	nxt = tok;
+	for (i = 0; nxt[i] != '\0'; i++)
+	{
+		if (de_lim(nxt[i], delim) == 1)
+			break;
+	}
+	if (nxt[i] == '\0')
+		nxt = NULL;
+	else
+	{
+		nxt[i] = '\0';
+		nxt = nxt + i + 1;
+		if (*nxt == '\0')
+			nxt = NULL;
+	}
+	return (tok);
 }
