@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * free_EOF - frees EOF.
