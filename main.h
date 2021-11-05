@@ -1,5 +1,5 @@
-#ifndef _SHELL_H_
-#define _SHELL_H_
+#ifndef _MAIN_H_
+#define _MAIN_H_
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -23,4 +23,4 @@ int _putchar(char c);
 void print_terror(char **argv, char *process, int cuenta, char *text);
 void superFree(char *text, char **argv);
 
-#endif /* _SHELL_H_ */
+#endif /* _MAIN_H_ */

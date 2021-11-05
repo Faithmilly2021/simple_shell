@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 /**
  * main - basic shell emulation.
  * @ac: argument counter.
