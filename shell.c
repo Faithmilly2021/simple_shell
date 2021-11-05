@@ -1,90 +1,49 @@
 #include "shell.h"
-
 /**
- * main - Simple Shell (Hsh)
- * @argc: Argument Count
- * @argv:Argument Value
- * Return: Exit Value By Status
+ * main - basic shell emulation.
+ * @ac: argument counter.
+ * @av: argument vector.
+ * Return: 0 on succes.
  */
-
-int main(__attribute__((unused)) int argc, char **argv)
+int main(int ac, char **av)
 {
-	char *input, **cmd;
-	int counter = 0, statue = 1, st = 0;
+	int bytes_read, status, cuenta = 0;
+	size_t size = 0;
+	char *text = 0, *prompt = "$ ", *argv[] = {NULL, NULL, NULL, NULL};
+	pid_t newpid;
+	struct stat fStat;
+	(void)ac;
 
-	if (argv[1] != NULL)
-		read_file(argv[1], argv);
-	signal(SIGINT, signal_to_handel);
-	while (statue)
+	if (isatty(STDIN_FILENO))
+		write(STDOUT_FILENO, prompt, 2);
+	while ((bytes_read = getline(&text, &size, stdin)))
 	{
-		counter++;
-		if (isatty(STDIN_FILENO))
-			prompt();
-		input = _getline();
-		if (input[0] == '\0')
+		if (bytes_read == EOF)
+			free_EOF(text);
+		if (text == NULL)
+			free_textNULL(text);
+		cuenta++;
+		create_argv(text, argv);
+		newpid = fork();
+		if (newpid == -1)
+			freeNewpid();
+		if (newpid == 0)
 		{
-			continue;
-		}
-		history(input);
-		cmd = parse_cmd(input);
-		if (_strcmp(cmd[0], "exit") == 0)
-		{
-			exit_bul(cmd, input, argv, counter);
-		}
-		else if (check_builtin(cmd) == 0)
-		{
-			st = handle_builtin(cmd, st);
-			free_all(cmd, input);
-			continue;
+			if (stat(argv[0], &fStat) == 0)
+			{
+				execve(argv[0], argv, NULL);
+				free(text);
+			}
+			else
+				print_terror(argv, av[0], cuenta, text);
 		}
 		else
-		{
-			st = check_cmd(cmd, input, counter, argv);
-
-		}
-		free_all(cmd, input);
+			wait(&status);
+		bytes_read = 0;
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, prompt, 2);
 	}
-	return (statue);
-}
-/**
- * check_builtin - check builtin
- *
- * @cmd:command to check
- * Return: 0 Succes -1 Fail
- */
-int check_builtin(char **cmd)
-{
-	bul_t fun[] = {
-		{"cd", NULL},
-		{"help", NULL},
-		{"echo", NULL},
-		{"history", NULL},
-		{NULL, NULL}
-	};
-	int i = 0;
-		if (*cmd == NULL)
-	{
-		return (-1);
-	}
-
-	while ((fun + i)->command)
-	{
-		if (_strcmp(cmd[0], (fun + i)->command) == 0)
-			return (0);
-		i++;
-	}
-	return (-1);
-}
-/**
- * creat_envi - Creat Array of Enviroment Variable
- * @envi: Array of Enviroment Variable
- * Return: Void
- */
-void creat_envi(char **envi)
-{
-	int i;
-
-	for (i = 0; environ[i]; i++)
-		envi[i] = _strdup(environ[i]);
-	envi[i] = NULL;
+	if (bytes_read == -1)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
