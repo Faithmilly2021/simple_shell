@@ -2,15 +2,15 @@
 #define _MAIN_H_
 
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <signal.h>
 #include <stdarg.h>
-#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <errno.h>
+#include <signal.h>
 #include <sys/signal.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -37,19 +37,6 @@ typedef struct bu_in
 	int (*fun)(char **);
 } tpe_bui;
 
-int free_EOF(char *text);
-int free_textNULL(char *text);
-void freeNewpid(void);
-void free_argv(char *argv[]);
-int _strcmp(char *s1, char *s2);
-char *_strncat(char *dest, char *src, int n);
-int _strlen(char *s);
-char *_strchr(char *s, char c);
-void create_argv(char *s, char **argv);
-void print_number(int n);
-int _putchar(char c);
-void print_terror(char **argv, char *process, int cuenta, char *text);
-void superFree(char *text, char **argv);
 typedef void (*sighandler_t)(int);
 char *get_string(int *i);
 char **token_arg(char *_str);
@@ -77,5 +64,4 @@ int _strcmp(char *s1, char *s2);
 int stat_fun(char **_str, int *_fl, char *_com, int c, char *av_0, char **env);
 char *_getline();
 void hashtag_handle(char *buff);
-
 #endif /* _MAIN_H_ */
